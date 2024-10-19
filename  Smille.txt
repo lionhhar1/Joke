@@ -1,0 +1,138 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قرصنة سفيان</title>
+    <style>
+        body {
+            background-color: black;
+            color: #00FF00; /* لون أخضر أكثر إشراقًا */
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 3em;
+            animation: blink 1.5s step-start infinite;
+        }
+        p {
+            font-size: 1.5em;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeIn 5s ease-in forwards;
+        }
+        .code {
+            font-size: 1.1em;
+            white-space: pre-wrap;
+            text-align: left;
+            width: 90%;
+            margin: 20px auto;
+            height: 400px;
+            overflow-y: scroll;
+            border: 1px solid #00FF00; /* لون أخضر */
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .alert {
+            font-size: 2em;
+            color: red; /* لون مبدئي للتنبيه */
+            animation: colorChange 2s infinite; /* تغيير اللون بشكل متكرر */
+            margin-top: 30px;
+        }
+        @keyframes colorChange {
+            0% { color: red; }
+            25% { color: yellow; }
+            50% { color: green; }
+            75% { color: cyan; }
+            100% { color: blue; }
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        <img src="/mnt/data/hacked_image.jpeg" alt="You Have Been Hacked" class="alert-image">
+        }
+    </style>
+</head>
+<body>
+<img src="/mnt/data/hacked_image_2.jpeg" alt="By Bay" class="alert-image">
+    <h1>تم اختراقك بواسطة قرصان سفيان</h1>
+    <p>أنت الآن داخل لعبته!</p>
+    <p>Soufian Njjar قام بتهكير هاتفك.</p>
+
+    <!-- الرسالة الجديدة -->
+    <div class="alert">تم إرسال كل مال موجود في محفظتك ونقله إلى محفظة 179403****** خاصة بسفيان نجار.</div>
+
+    <!-- إضافة صورة جديدة -->
+    <img src="https://example.com/your-image.jpg" alt="صورة تحذير" class="alert-image"> <!-- استبدل بالرابط الصحيح -->
+
+    <div class="code" id="codeDisplay"></div>
+
+    <script>
+        const codeLines = [
+            "> تحميل البيانات السرية من الخادم...",
+            "> الوصول إلى قاعدة البيانات...نجاح",
+            "> تنزيل بيانات المستخدم... 45%",
+            "> إنشاء اتصال بشبكة الـ VPN...",
+            "> الحصول على بيانات الموقع الجغرافي...فشل",
+            "> إعادة المحاولة...",
+            "> استخراج بيانات المستخدم: سفيان",
+            "> فتح الوصول إلى الكاميرا...نجاح",
+            "> تعطيل جدار الحماية...نجاح",
+            "> تنزيل الملفات الحساسة...",
+            "> تحميل فيروس Trojan...",
+            "> اختراق البريد الإلكتروني...",
+            "> تحميل معلومات الحساب البنكي...",
+            "> تم سحب 150 دولار من حسابك البنكي.",
+            "> قام سفيان بوضع فيروس 1.21 داخل جهازك.",
+            "> تم الاستيلاء على النظام بالكامل!",
+            "> إرسال بياناتك إلى الخادم الخارجي...",
+            "> تم الاستيلاء على جهازك بالكامل.",
+            "> [INFO] بدء العملية...",
+            "> [CODE] F1A7C3E4...",
+            "> [LOG] تتبع الوصول إلى الملقم...",
+            "> [ALERT] دخول غير مصرح به!",
+            "> [STATUS] النظام في حالة الإنذار...",
+            "> [COMMAND] قم بإعادة تشغيل النظام...",
+            "> [TRACE] تتبع البيانات جارٍ...",
+            "> [SECURITY] رفع مستوى الأمان...",
+            "> [ERROR] فشل الاتصال بالمستودع...",
+            "> [SUCCESS] تم تنفيذ الأوامر بنجاح!",
+            "> [INFO] تحذير: تم اكتشاف وجود برامج خبيثة.",
+            "> [TRACE] بدأ البحث عن بيانات المستخدم...",
+            "> [DECRYPT] فك تشفير الملفات...",
+            "> [ALERT] تم استرداد كلمة المرور...",
+            "> [EXECUTE] تنفيذ الأوامر...",
+            "> [LOG] بدء عملية التحميل...",
+            "> [BACKDOOR] فتح ثغرة في النظام...",
+            "> [SUCCESS] تم الاختراق بنجاح بواسطة Soufian Njjar!"
+        ];
+
+        const codeDisplay = document.getElementById('codeDisplay');
+
+        let i = 0;
+        function displayCode() {
+            if (i < codeLines.length) {
+                const newLine = document.createElement('div');
+                newLine.textContent = codeLines[i];
+                codeDisplay.appendChild(newLine);
+                i++;
+                setTimeout(displayCode, 1000); // عرض كل سطر بعد ثانية واحدة
+            }
+        }
+
+        displayCode();
+
+        setTimeout(function() {
+            alert('تم تسجيل دخولك بنجاح! تم الاستيلاء على جهازك بواسطة قرصان سفيان.');
+        }, 20000); // رسالة تظهر بعد 20 ثانية
+
+        // إضافة صوت الخلفية (تأكد من استخدام رابط صوت صحيح)
+        const audio = new Audio('https://example.com/hacking-sound.mp3');
+        audio.play();
+    </script>
+</body>
+</html>
