@@ -77,4 +77,4 @@ proxies = load_proxies()
 if proxies:
     make_request_with_proxy(query_id, proxies)
 else:
-    print("No proxies available.")
+    print("No proxies available.")print("تم الوصول للهدف بواسطة سفيان.")
