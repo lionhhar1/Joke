@@ -1,0 +1,72 @@
+import time
+import random
+import threading
+import requests
+
+# طلب مدخلات من المستخدم
+current_tokens = int(input("أدخل عدد الرموز الحالية: "))
+desired_addition = int(input("كم عدد الرموز التي تريد إضافتها؟ "))
+goal_tokens = current_tokens + desired_addition
+
+# طلب ملف الوكلاء من المستخدم (أو افتراض ملف معين)
+proxy_file = input("أدخل اسم ملف الوكلاء (أو اتركه فارغًا لاستخدام 'proxies.txt'): ") or 'proxies.txt'
+
+# تحميل الوكلاء من الملف
+def load_proxies():
+    proxies = []
+    try:
+        with open(proxy_file, 'r') as f:
+            proxies = f.read().splitlines()
+    except FileNotFoundError:
+        print(f"الملف {proxy_file} غير موجود.")
+    return proxies
+
+# دالة لاستخدام الوكلاء في الطلبات
+def make_request_with_proxy(query_id, proxies):
+    for proxy in proxies:
+        proxy_dict = {"http": proxy, "https": proxy}
+        try:
+            response = requests.get(f"https://example.com/api?query={query_id}", proxies=proxy_dict)
+            print(response.text)
+            break  # اخرج من الحلقة إذا نجحت الطلب
+        except requests.exceptions.RequestException as e:
+            print(f"فشل مع الوكيل {proxy}: {e}")
+
+# دالة لحساب عدد الرموز وجمعها
+def claim_rewards():
+    global current_tokens
+    current_tokens += random.randint(50, 100)  # إضافة رموز عشوائية كمثال
+    print(f"الرموز الحالية: {current_tokens}")
+    time.sleep(random.uniform(2, 5))  # تأخير عشوائي لمنع الحظر
+
+# دالة للتحقق من تحقيق الهدف
+def check_token_goal():
+    global current_tokens, goal_tokens
+    if current_tokens >= goal_tokens:
+        print(f"تم الوصول إلى الهدف: {goal_tokens} رمز!")
+        return True
+    return False
+
+# دالة لجمع الرموز باستمرار
+def collect_tokens():
+    while not check_token_goal():
+        claim_rewards()
+
+# تشغيل الخيوط
+threads = []
+for i in range(5):  # تشغيل 5 خيوط
+    t = threading.Thread(target=collect_tokens)
+    threads.append(t)
+    t.start()
+
+for t in threads:
+    t.join()
+
+# التعامل مع الوكلاء وتنفيذ الطلب
+query_id = input("أدخل الـ Query ID: ")
+proxies = load_proxies()
+
+if proxies:
+    make_request_with_proxy(query_id, proxies)
+else:
+    print("لا توجد وكلاء متاحة.")
