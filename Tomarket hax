@@ -49,4 +49,14 @@ print(f"Successfully reached {goal_tokens} tokens!"){
   "auto_play": true,
   "proxy_file": "proxies.txt"
 }http://user:password@proxy1.com:8080
-http://user:password@proxy2.com:8080
+http://user:password@proxy2.com:8080 # استيراد المكتبات الضرورية
+import requests
+
+# قراءة query ID
+query_id = input("أدخل الـ Query ID: ")
+
+# هنا يمكنك استخدام الـ Query ID في الطلب أو في المهمة التي تريد تنفيذها
+response = requests.get(f"https://example.com/api?query={query_id}")
+
+# عرض النتيجة
+print(response.text)
