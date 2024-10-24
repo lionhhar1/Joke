@@ -1,0 +1,80 @@
+import time
+import random
+import threading
+import json
+import requests
+
+# تحميل الإعدادات من config.json
+with open('config.json', 'r') as config_file:
+    config = json.load(config_file)
+
+current_tokens = config['current_tokens']
+desired_addition = config['desired_addition']
+goal_tokens = current_tokens + desired_addition
+
+# قراءة بيانات الوكيل من ملف
+proxy_file = config.get('proxy_file', 'proxies.txt')
+
+# تحميل الوكلاء من الملف
+def load_proxies():
+    proxies = []
+    try:
+        with open(proxy_file, 'r') as f:
+            proxies = f.read().splitlines()
+    except FileNotFoundError:
+        print(f"File {proxy_file} not found.")
+    return proxies
+
+# دالة لاستخدام الوكلاء في الطلبات
+def make_request_with_proxy(query_id, proxies):
+    for proxy in proxies:
+        proxy_dict = {"http": proxy, "https": proxy}
+        try:
+            response = requests.get(f"https://example.com/api?query={query_id}", proxies=proxy_dict)
+            print(response.text)
+            break  # اخرج من الحلقة إذا نجحت الطلب
+        except requests.exceptions.RequestException as e:
+            print(f"Failed with proxy {proxy}: {e}")
+
+# دالة لحساب عدد الرموز وجمعها
+def claim_rewards():
+    global current_tokens
+    # هنا تكتب الكود الخاص بجمع الرموز من البوت
+    current_tokens += random.randint(50, 100)  # رمز عشوائي كمثال
+    print(f"Current tokens: {current_tokens}")
+    time.sleep(random.uniform(2, 5))  # تأخير عشوائي لمنع الحظر
+
+# دالة للتحقق من تحقيق الهدف
+def check_token_goal():
+    global current_tokens, goal_tokens
+    if current_tokens >= goal_tokens:
+        print(f"Goal reached: {goal_tokens} tokens!")
+        return True
+    return False
+
+# دالة لجمع الرموز باستمرار
+def collect_tokens():
+    while not check_token_goal():
+        claim_rewards()
+
+# استخدام خيوط متعددة لتسريع جمع الرموز
+threads = []
+for i in range(5):  # تشغيل 5 خيوط لزيادة السرعة
+    t = threading.Thread(target=collect_tokens)
+    threads.append(t)
+    t.start()
+
+for t in threads:
+    t.join()
+
+# عرض الرسالة عند الوصول للهدف
+print(f"Successfully reached {goal_tokens} tokens!")
+
+# التعامل مع الوكلاء وتنفيذ الطلب باستخدام الـ Query ID
+query_id = input("أدخل الـ Query ID: ")
+proxies = load_proxies()
+
+if proxies:
+    make_request_with_proxy(query_id, proxies)
+else:
+    print("No proxies available.")
