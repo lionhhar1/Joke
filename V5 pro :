@@ -1,0 +1,83 @@
+import requests
+from telethon import TelegramClient, events
+from telethon.errors import FloodWait
+import time
+
+# إعدادات API
+API_ID = "27162215"  # API ID الخاص بك
+API_HASH = "ccad75107a0bd1ed8626180aaa5a596e"  # API Hash الخاص بك
+BOT_TOKEN = "ضع_رمز_الروبوت_هنا"  # ضع هنا رمز الروبوت الخاص بك
+TOMARKET_API_URL = "https://example.com/api"  # استبدل برابط API الخاص بـ Tomarket
+
+client = TelegramClient('bot', API_ID, API_HASH).start(bot_token=BOT_TOKEN)
+
+# وظيفة للتحقق من اسم المستخدم
+def check_username(username):
+    return "🍅" in username
+
+# وظيفة لجمع النقاط
+async def collect_points(username, quantity):
+    response = requests.post(f"{TOMARKET_API_URL}/collect", data={"username": username, "quantity": quantity})
+    return response
+
+@client.on(events.NewMessage(pattern='/start'))
+async def start(event):
+    await event.respond("مرحبًا! استخدم الأمر /collect لجمع النقاط.")
+
+@client.on(events.NewMessage(pattern='/collect'))
+async def collect(event):
+    username = event.sender.username
+
+    # تحقق من اسم المستخدم
+    if not check_username(username):
+        await event.respond("يجب أن يتضمن اسم المستخدم الخاص بك 🍅 لتتمكن من استخدام الروبوت.")
+        return
+
+    await event.respond("من فضلك، أدخل الكمية التي ترغب في جمعها:")
+    
+    @client.on(events.NewMessage(from_users=event.sender.id))
+    async def get_quantity(quantity_event):
+        try:
+            quantity = int(quantity_event.message.text)
+            if quantity > 0:
+                response = await collect_points(username, quantity)
+                
+                if response.status_code == 200:
+                    # هنا يظهر اسمك بالألوان
+                    await event.respond(f"\033[1;32mتم جمع {quantity} طماطم بنجاح, soufiane!\033[0m")  # اللون الأخضر
+                else:
+                    await event.respond("حدث خطأ أثناء جمع النقاط. حاول مرة أخرى.")
+            else:
+                await event.respond("يرجى إدخال كمية صحيحة أكبر من 0.")
+        except ValueError:
+            await event.respond("يرجى إدخال عدد صحيح فقط.")
+        except FloodWait as e:
+            await event.respond(f"توقف مؤقت لمدة {e.seconds} ثانية. يرجى الانتظار.")
+            time.sleep(e.seconds)
+            await collect(event)
+
+@client.on(events.NewMessage(pattern='/balance'))
+async def balance(event):
+    username = event.sender.username
+    response = requests.get(f"{TOMARKET_API_URL}/balance", params={"username": username})
+
+    if response.status_code == 200:
+        balance_data = response.json()
+        await event.respond(f"رصيدك الحالي: {balance_data['balance']} طماطم.")
+    else:
+        await event.respond("حدث خطأ أثناء استرجاع الرصيد.")
+
+@client.on(events.NewMessage(pattern='/help'))
+async def help(event):
+    help_text = (
+        "الأوامر المتاحة:\n"
+        "/collect - جمع النقاط.\n"
+        "/balance - التحقق من رصيدك.\n"
+        "/help - عرض هذه الرسالة."
+    )
+    await event.respond(help_text)
+
+# بدء تشغيل الروبوت
+client.start()
+print("\033[1;32mالروبوت يعمل الآن... يمكنك استخدام الأوامر, soufiane.\033[0m")  # نص بالأخضر مع اسمك
+client.run_until_disconnected()
