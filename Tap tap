@@ -1,0 +1,121 @@
+// ==UserScript==
+// @name         TapswapTasks
+// @namespace    https://github.com/glad-tidings/
+// @version      2.7
+// @description  Tapswap Auto Task :)
+// @author       Glad Tidings
+// @match        https://app.tapswap.club/*
+// @icon         https://raw.githubusercontent.com/glad-tidings/TapswapTasks/refs/heads/main/icon.jpeg
+// @grant        None
+// @downloadURL  https://raw.githubusercontent.com/glad-tidings/TapswapTasks/refs/heads/main/tapswaptasks.js
+// @updateURL    https://raw.githubusercontent.com/glad-tidings/TapswapTasks/refs/heads/main/tapswaptasks.js
+// @homepage     https://github.com/glad-tidings/TapswapTasks/
+// @require      https://code.jquery.com/jquery-3.7.1.min.js
+// ==/UserScript==
+
+(function () {
+  function onready(fn) {
+    if (document.readyState !== "loading") fn();
+    else document.addEventListener("DOMContentLoaded", fn);
+  }
+
+  onready(function () {
+    const styles = {
+      success: 'background: #28a745; color: #ffffff; font-weight: bold; padding: 4px 8px; border-radius: 4px;',
+      starting: 'background: #8640ff; color: #ffffff; font-weight: bold; padding: 4px 8px; border-radius: 4px;',
+      error: 'background: #dc3545; color: #ffffff; font-weight: bold; padding: 4px 8px; border-radius: 4px;',
+      info: 'background: #007bff; color: #ffffff; font-weight: bold; padding: 4px 8px; border-radius: 4px;'
+    };
+
+    const logPrefix = '%c[TapSwapBot] ';
+    const originalLog = console.log;
+
+    console.log = function () {
+      if (typeof arguments[0] === 'string' && arguments[0].includes('[TapSwapBot]')) {
+        originalLog.apply(console, arguments);
+      }
+    };
+
+    console.error = () => {}; // Disable error logs to clean output
+    console.warn = console.info = console.debug = () => {};
+
+    let listnumber = 0;
+
+    const $ = window.jQuery;
+    const fullurl = window.location.hash;
+
+    const username = fullurl.split("%2522%252C%2522language_code")[0].split("username%2522%253A%2522")[1];
+    const tapname = fullurl.split("%2522%252C%2522last_name")[0].split("first_name%2522%253A%2522")[1];
+    
+    const buttonn = createButton(tapname, username, "red", "top: 0; right: 0;");
+    document.body.appendChild(buttonn);
+
+    const backbutton = createButton("Back", "", "blue", "bottom: 0; right: 0;", true);
+    document.body.appendChild(backbutton);
+
+    backbutton.addEventListener("click", () => {
+      clickAccountButton();
+    });
+
+    function createButton(innerText, username, color, position, hide = false) {
+      const button = document.createElement("Button");
+      button.style.cssText = `background-color: ${color}; position: absolute; z-index: 99999; padding: 3px 2px; ${position}`;
+      button.innerHTML = hide ? innerText : `${innerText} ( ${username} )`;
+      if (hide) button.style.display = "none";
+      return button;
+    }
+
+    function clickAccountButton() {
+      try {
+        Array.from(document.querySelectorAll("button")).find((el) => el.textContent.includes("Account")).click();
+      } catch (err) {
+        console.error(err.name, err.message);
+      }
+    }
+
+    function getanswer(question = "") {
+      fetch("https://raw.githubusercontent.com/glad-tidings/TapswapTasks/refs/heads/main/list.json")
+        .then(response => response.text())
+        .then(storedText => {
+          const answer = JSON.parse(storedText)[question] || "NotFound";
+          fillInput(answer);
+        })
+        .catch(err => console.error("Error fetching answers:", err));
+    }
+
+    function fillInput(answer) {
+      const input = document.evaluate(
+        "/html/body/div/div[1]/div[2]/div[3]/div[2]/div/div[3]/div/div/input",
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      ).singleNodeValue;
+
+      if (input) {
+        input.value = answer;
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+
+        const submitButton = Array.from(document.querySelectorAll("button")).find((el) => el.textContent.includes("Submit"));
+        if (submitButton) {
+          submitButton.click();
+          setTimeout(() => submitButton.click(), 1000);
+        }
+      }
+    }
+
+    setInterval(() => {
+      const closeButton = document.querySelector('img[alt="close"]');
+      const getItButton = Array.from(document.querySelectorAll("button")).find((el) => el.textContent.includes("Get it!"));
+      const taskButton = Array.from(document.querySelectorAll("button")).find((el) => el.textContent.includes("Task"));
+      const reloadButton = Array.from(document.querySelectorAll("button")).find((el) => el.textContent.includes("Reload"));
+
+      if (closeButton) closeButton.click();
+      if (getItButton) getItButton.click();
+      if (taskButton) taskButton.click();
+      if (reloadButton) location.reload();
+    }, 2000);
+
+    // Remaining code...
+  });
+})();
